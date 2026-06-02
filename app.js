@@ -4,7 +4,7 @@
 const { createClient } = supabase;
 
 // ⚠️ GANTI KEDUA TEKS DI BAWAH INI DENGAN KUNCI DARI SUPABASE KAMU! ⚠️
-const SUPABASE_URL = 'https://ohzdsumocunqlszjaese.supabase.co/rest/v1/'; 
+const SUPABASE_URL = 'https://ohzdsumocunqlszjaese.supabase.co'; 
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9oemRzdW1vY3VucWxzemphZXNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzODg2NzEsImV4cCI6MjA5NTk2NDY3MX0.GIJafCPQgK7bC5xNsHqTdaEDPv4kGiyw3DEOUZoGsRk';
 const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
