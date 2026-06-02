@@ -109,13 +109,25 @@ function getLocationGPS() {
     } else { statusText.innerText = "Browser tidak mendukung GPS."; }
 }
 
+let nsfwModel = null; // Tambahan penampung AI Sensor
+
 async function initAI() {
     const status = document.getElementById('ai-status');
     const btn = document.getElementById('btn-submit-laporan');
     try {
+        status.innerHTML = "🔄 Memuat AI Ganda (MobileNet & NSFW)...";
+        
+        // Memuat dua otak AI sekaligus
         aiModel = await mobilenet.load();
-        status.innerHTML = "✅ AI CNN Model Ready"; status.className = "text-green"; btn.innerText = "Kirim Laporan";
-    } catch(e) { status.innerHTML = "❌ AI Gagal dimuat"; status.className = "text-red"; }
+        nsfwModel = await nsfwjs.load(); 
+        
+        status.innerHTML = "✅ AI Moderation (Ganda) Ready"; 
+        status.className = "text-green"; 
+        btn.innerText = "Kirim Laporan";
+    } catch(e) { 
+        status.innerHTML = "❌ AI Gagal dimuat. Cek koneksi internet."; 
+        status.className = "text-red"; 
+    }
 }
 
 document.getElementById('lap-foto').addEventListener('change', function(e) {
@@ -123,22 +135,62 @@ document.getElementById('lap-foto').addEventListener('change', function(e) {
     const preview = document.getElementById('previewFoto');
     const status = document.getElementById('ai-status');
     const btn = document.getElementById('btn-submit-laporan');
+    
     btn.disabled = true;
     const reader = new FileReader();
+    
     reader.onload = function(event) {
         preview.src = event.target.result; preview.style.display = 'block';
         preview.onload = async function() {
-            if (!aiModel) return;
-            status.innerHTML = "🔍 CNN Menganalisis Gambar..."; status.className = "text-gray";
+            if (!aiModel || !nsfwModel) return;
+            status.innerHTML = "🔍 AI Sedang Memindai Gambar..."; 
+            status.className = "text-gray";
+            
+            // 1. CEK LAPIS PERTAMA: Konten Tidak Senonoh (NSFW)
+            const nsfwPredictions = await nsfwModel.classify(preview);
+            let isNSFW = false;
+            // Jika AI yakin di atas 60% bahwa itu Pornografi, Hentai, atau terlalu seksi
+            nsfwPredictions.forEach(p => { 
+                if (['Porn', 'Hentai', 'Sexy'].includes(p.className) && p.probability > 0.6) {
+                    isNSFW = true; 
+                } 
+            });
+
+            if (isNSFW) {
+                status.innerHTML = "❌ DITOLAK: Terdeteksi Konten Tidak Senonoh!"; 
+                status.className = "text-red"; 
+                btn.disabled = true; base64Foto = "";
+                return; // Berhenti memindai, langsung tolak
+            }
+
+            // 2. CEK LAPIS KEDUA: Barang Tidak Relevan (MobileNet)
             const predictions = await aiModel.classify(preview);
-            const badObjects = ['person', 'face', 'dog', 'cat', 'plant'];
+            
+            // Daftar hitam diperluas: Hewan, manusia, kendaraan besar, pemandangan, makanan, bangunan
+            const badObjects = [
+                'person', 'face', 'dog', 'cat', 'plant', 'tree', 
+                'car', 'bus', 'truck', 'tractor', 'motorcycle',
+                'mountain', 'beach', 'ocean', 'cliff',
+                'food', 'pizza', 'burger', 'fruit', 'vegetable',
+                'toilet', 'building', 'house'
+            ];
+            
             let isBanned = false;
-            predictions.forEach(p => { badObjects.forEach(w => { if(p.className.toLowerCase().includes(w)) isBanned = true; }); });
+            predictions.forEach(p => { 
+                badObjects.forEach(w => { 
+                    if(p.className.toLowerCase().includes(w)) isBanned = true; 
+                }); 
+            });
             
             if (isBanned) { 
-                status.innerHTML = "❌ Ditolak: Deteksi Wajah/Makhluk Hidup!"; status.className = "text-red"; btn.disabled = true; base64Foto = ""; 
+                status.innerHTML = "❌ DITOLAK: Objek bukan barang hilang/temuan kampus!"; 
+                status.className = "text-red"; 
+                btn.disabled = true; base64Foto = ""; 
             } else { 
-                status.innerHTML = `✅ Gambar Valid (${predictions[0].className})`; status.className = "text-green"; btn.disabled = false; base64Foto = event.target.result; 
+                // Jika lolos kedua lapis AI
+                status.innerHTML = `✅ Gambar Valid (${predictions[0].className})`; 
+                status.className = "text-green"; 
+                btn.disabled = false; base64Foto = event.target.result; 
             }
         };
     };
