@@ -136,3 +136,69 @@ textarea { min-height: 100px; resize: vertical; }
 .badge-aktif { background: var(--yellow); color: white; float: right; }
 .action-box { background: #F8FAFC; border: 1px solid #E2E8F0; padding: 20px; border-radius: 6px; margin-top: 15px; }
 .gps-link { display: inline-block; margin-top: 5px; color: var(--blue); font-size: 0.85rem; font-weight: bold; text-decoration: underline; }
+
+/* ==========================================
+   UI POLISH (Efek Halus & Animasi Modern)
+   ========================================== */
+
+/* 1. Efek Mengambang Lembut pada Navbar */
+.navbar {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* 2. Kartu (Card) Terlihat 3D dan Hidup saat Disentuh */
+.card {
+    border: none; 
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px); /* Kartu naik sedikit */
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12); /* Bayangan sedikit menebal */
+}
+
+/* 3. Tombol Terasa "Empuk" (Micro-interactions) */
+.btn-yellow, .btn-yellow-sm, .btn-yellow-full, 
+.btn-blue, .btn-blue-full, .btn-outline, .btn-outline-sm, 
+.btn-green-full, .btn-card {
+    transition: all 0.25s ease-in-out;
+}
+
+.btn-yellow:hover, .btn-yellow-sm:hover, .btn-yellow-full:hover, 
+.btn-blue:hover, .btn-blue-full:hover:not(:disabled), 
+.btn-outline:hover, .btn-outline-sm:hover, 
+.btn-green-full:hover, .btn-card:hover {
+    transform: scale(1.02); /* Tombol membesar sangat sedikit */
+}
+
+.btn-yellow:active, .btn-yellow-sm:active, .btn-yellow-full:active, 
+.btn-blue:active, .btn-blue-full:active:not(:disabled), 
+.btn-outline:active, .btn-outline-sm:active, 
+.btn-green-full:active, .btn-card:active {
+    transform: scale(0.98); /* Mengecil saat diklik (efek ditekan) */
+}
+
+/* 4. Kolom Input Lebih Nyaman Dilihat (Focus Ring) */
+input[type="text"], input[type="email"], input[type="password"], 
+input[type="date"], select, textarea {
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus, input[type="email"]:focus, 
+input[type="password"]:focus, input[type="date"]:focus, 
+select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); /* Pendar biru transparan */
+}
+
+/* 5. Merapikan Sudut Gambar pada Kartu */
+.card-img-placeholder img {
+    transition: transform 0.4s ease;
+}
+
+.card:hover .card-img-placeholder img {
+    transform: scale(1.05); /* Gambar sedikit "Zoom-in" saat kartu di-hover */
+}
