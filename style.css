@@ -13,11 +13,9 @@ a { text-decoration: none; color: var(--blue); }
 /* Toast Notification */
 .toast { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: #D1FAE5; color: #065F46; padding: 15px 30px; border-radius: 6px; border: 1px solid #34D399; z-index: 1000; font-weight: 500; width: 90%; max-width: 800px; display: flex; justify-content: space-between; }
 
-/* Navbar - Ditambah Efek Glassmorphism */
+/* Navbar - Dikembalikan ke warna solid asli */
 .navbar { 
-    background-color: rgba(30, 41, 59, 0.85); 
-    backdrop-filter: blur(12px); 
-    -webkit-backdrop-filter: blur(12px); 
+    background-color: var(--navy); /* Kembali menggunakan warna Navy yang tegas */
     padding: 15px 5%; 
     display: flex; 
     justify-content: space-between; 
@@ -26,9 +24,9 @@ a { text-decoration: none; color: var(--blue); }
     position: sticky; 
     top: 0; 
     z-index: 100; 
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08); 
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Bayangan lembut tetap dipertahankan */
 }
+
 .nav-left, .nav-right { display: flex; align-items: center; gap: 20px; }
 .logo { font-size: 1.25rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; }
 .nav-link { color: #CBD5E1; font-size: 0.95rem; transition: 0.2s; cursor: pointer; }
