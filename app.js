@@ -79,7 +79,14 @@ async function register() {
     const nama = document.getElementById('reg-nama').value;
     const email = document.getElementById('reg-email').value;
     const pass = document.getElementById('reg-pass').value;
+    
     if (pass.length < 6) return alert("Password minimal 6 karakter!");
+    
+    // 🔒 GEMBOK UNIVERSAL: Hanya menerima email berakhiran .ac.id atau .edu
+    if (!email.endsWith('.ac.id') && !email.endsWith('.edu')) {
+        alert("❌ Pendaftaran Ditolak! Harap gunakan email resmi universitas/kampus (.ac.id atau .edu).");
+        return; // Menghentikan proses daftar
+    }
     
     // Tulis Database: INSERT INTO users ...
     const { error } = await db.from('users').insert([{ nama: nama, email: email, password: pass, poin: 0 }]);
