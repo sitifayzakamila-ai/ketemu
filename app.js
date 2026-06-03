@@ -346,3 +346,19 @@ async function renderNotif() {
     await db.from('notifikasi').update({ dibaca: true }).eq('user_id', currentUser.id);
     updateNotifBadge();
 }
+// ==========================================
+// FUNGSI TOGGLE HAMBURGER MENU MOBILE
+// ==========================================
+function toggleMobileMenu() {
+    const menu = document.getElementById('nav-menu-container');
+    menu.classList.toggle('show');
+}
+
+// Modifikasi fungsi navigate bawaanmu agar otomatis menutup menu setelah diklik
+const originalNavigate = navigate;
+navigate = function(pageId) {
+    originalNavigate(pageId);
+    // Otomatis tutup kembali menu hamburger setelah link diklik
+    const menu = document.getElementById('nav-menu-container');
+    if (menu) menu.classList.remove('show');
+}
