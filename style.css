@@ -15,7 +15,7 @@ a { text-decoration: none; color: var(--blue); }
 
 /* Navbar - Dikembalikan ke warna solid asli */
 .navbar { 
-    background-color: var(--navy); /* Kembali menggunakan warna Navy yang tegas */
+    background-color: var(--navy); 
     padding: 15px 5%; 
     display: flex; 
     justify-content: space-between; 
@@ -24,7 +24,7 @@ a { text-decoration: none; color: var(--blue); }
     position: sticky; 
     top: 0; 
     z-index: 100; 
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Bayangan lembut tetap dipertahankan */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
 }
 
 .nav-left, .nav-right { display: flex; align-items: center; gap: 20px; }
@@ -99,14 +99,32 @@ textarea { min-height: 100px; resize: vertical; }
 .text-green { color: var(--green); font-weight: bold; }
 .text-red { color: var(--red); font-weight: bold; }
 
-/* Dashboard & Cards */
+/* ==========================================
+   Dashboard & Cards (DI PERBAIKI UNTUK RESPONSIVE DESKTOP)
+   ========================================== */
 .profile-card { background: white; padding: 30px; border-radius: 8px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
 .text-orange { color: var(--yellow); }
 .section-title { font-size: 1.25rem; color: var(--navy); margin-bottom: 20px; }
 
-.report-list, .explore-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-.explore-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
-.card { background: white; border-radius: 8px; border: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+/* KUNCI RESPONSIVE: Penampung galeri dibiarkan membungkus (wrap) ke bawah */
+#explore-gallery, #my-reports { 
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 20px; 
+    justify-content: flex-start;
+}
+
+.card { 
+    background: white; 
+    border-radius: 8px; 
+    border: 1px solid var(--border); 
+    display: flex; 
+    flex-direction: column; 
+    overflow: hidden; 
+    flex: 1 1 300px; /* Fleksibel: Tumbuh mengisi ruang, tapi tidak lebih kecil dari 300px */
+    max-width: 100%;
+}
+
 .card-img-placeholder { height: 180px; background: #E2E8F0; display: flex; justify-content: center; align-items: center; }
 .card-img-placeholder img { width: 100%; height: 100%; object-fit: cover; }
 .card-body { padding: 20px; flex: 1; }
@@ -161,8 +179,8 @@ textarea { min-height: 100px; resize: vertical; }
 }
 
 .card:hover {
-    transform: translateY(-5px); /* Kartu naik sedikit */
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12); /* Bayangan sedikit menebal */
+    transform: translateY(-5px); 
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12); 
 }
 
 /* 2. Tombol Terasa "Empuk" (Micro-interactions) */
@@ -176,14 +194,14 @@ textarea { min-height: 100px; resize: vertical; }
 .btn-blue:hover, .btn-blue-full:hover:not(:disabled), 
 .btn-outline:hover, .btn-outline-sm:hover, 
 .btn-green-full:hover, .btn-card:hover {
-    transform: scale(1.02); /* Tombol membesar sangat sedikit */
+    transform: scale(1.02); 
 }
 
 .btn-yellow:active, .btn-yellow-sm:active, .btn-yellow-full:active, 
 .btn-blue:active, .btn-blue-full:active:not(:disabled), 
 .btn-outline:active, .btn-outline-sm:active, 
 .btn-green-full:active, .btn-card:active {
-    transform: scale(0.98); /* Mengecil saat diklik (efek ditekan) */
+    transform: scale(0.98); 
 }
 
 /* 3. Kolom Input Lebih Nyaman Dilihat (Focus Ring) */
@@ -197,7 +215,7 @@ input[type="password"]:focus, input[type="date"]:focus,
 select:focus, textarea:focus {
     outline: none;
     border-color: var(--blue);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); /* Pendar biru transparan */
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); 
 }
 
 /* 4. Merapikan Sudut Gambar pada Kartu */
@@ -206,14 +224,12 @@ select:focus, textarea:focus {
 }
 
 .card:hover .card-img-placeholder img {
-    transform: scale(1.05); /* Gambar sedikit "Zoom-in" saat kartu di-hover */
+    transform: scale(1.05); 
 }
 
 /* ==========================================
    ANIMASI HALUS SAAT DATA DIMUAT
    ========================================== */
-
-/* Membuat kunci animasi pergerakan dari bawah ke atas */
 @keyframes fadeUp {
     from { 
         opacity: 0; 
@@ -225,13 +241,72 @@ select:focus, textarea:focus {
     }
 }
 
-/* Memasang animasi ke kartu laporan dan kotak statistik */
 .card, .stat-box {
     animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Sedikit efek jeda (delay) antar elemen agar munculnya bergantian secara elegan */
 .card:nth-child(1) { animation-delay: 0.1s; }
 .card:nth-child(2) { animation-delay: 0.2s; }
 .card:nth-child(3) { animation-delay: 0.3s; }
 .card:nth-child(4) { animation-delay: 0.4s; }
+
+/* ==========================================
+   CSS RESPONSIVE SUPER AMPUH (Layar < 768px)
+   ========================================== */
+@media screen and (max-width: 768px) {
+    /* 1. Memaksa semua elemen tidak melebar ke luar layar */
+    * {
+        box-sizing: border-box !important;
+        max-width: 100% !important;
+    }
+
+    /* 2. Merapikan Navigasi Atas */
+    nav {
+        flex-direction: column !important;
+        height: auto !important;
+        padding: 15px !important;
+        text-align: center !important;
+    }
+
+    nav div {
+        flex-direction: column !important;
+        gap: 10px !important;
+        margin-top: 10px !important;
+    }
+
+    /* 3. Menyesuaikan Lebar Container Utama */
+    .container, .form-container, .page, .detail-header, .detail-box {
+        width: 95% !important;
+        margin: 10px auto !important;
+        padding: 15px !important;
+    }
+
+    /* 4. Merombak Kartu Laporan Menjadi Vertikal */
+    .card {
+        flex-direction: column !important;
+        width: 100% !important;
+        height: auto !important;
+        margin-bottom: 15px !important;
+    }
+
+    /* 5. Menyesuaikan Gambar di dalam Kartu */
+    .card-img-placeholder, .card-img-placeholder img {
+        width: 100% !important;
+        height: 200px !important;
+        object-fit: cover !important;
+        border-radius: 8px 8px 0 0 !important;
+    }
+
+    /* 6. Memaksa Kotak Galeri Menjadi Satu Kolom ke Bawah */
+    #explore-gallery, #my-reports {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+
+    /* 7. Melebarkan Tombol dan Input Form */
+    input, select, textarea, button, .btn-card, .btn-blue-full, .btn-green-full {
+        width: 100% !important;
+        margin-top: 10px !important;
+    }
+}
