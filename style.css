@@ -76,7 +76,7 @@ p, h1, h2, h3, h4, h5, h6, span, div { overflow-wrap: break-word; word-wrap: bre
 
 .form-header { text-align: center; margin-bottom: 30px; }
 .form-header h2 { color: var(--navy); }
-.report-form { background: white; padding: 40px; border-radius: 8px; border: 1px solid var(--border); max-width: 800px; margin: 0 auto; }
+.report-form { background: white; padding: 40px; border-radius: 8px; border: 1px solid var(--border); max-width: 800px; width: 100%; margin: 0 auto; }
 .form-group { margin-bottom: 20px; text-align: left; }
 .form-row { display: flex; gap: 20px; }
 .half { flex: 1; }
@@ -84,113 +84,26 @@ label { display: block; font-size: 0.9rem; font-weight: 600; color: var(--navy);
 input[type="text"], input[type="email"], input[type="password"], input[type="date"], select, textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 4px; font-size: 0.95rem; }
 textarea { min-height: 100px; resize: vertical; }
 
-.ai-validation-box { margin-top: 10px; padding: 15px; background: #F1F5F9; border: 1px dashed var(--blue); border-radius: 4px; text-align: center; }
-
-/* Dashboard & Cards */
-.profile-card { background: white; padding: 30px; border-radius: 8px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-.text-orange { color: var(--yellow); }
-.section-title { font-size: 1.25rem; color: var(--navy); margin-bottom: 20px; }
-
-#explore-gallery, #my-reports { display: flex; flex-wrap: wrap; gap: 20px; justify-content: flex-start; }
-
-.card { background: white; border-radius: 8px; border: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; flex: 1 1 300px; max-width: 100%; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03); transition: transform 0.2s ease; }
-.card:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08); }
-.card-img-placeholder { height: 200px; background: #E2E8F0; display: flex; justify-content: center; align-items: center; }
-.card-img-placeholder img { width: 100%; height: 100%; object-fit: cover; }
-.card-body { padding: 20px; flex: 1; display:flex; flex-direction:column; justify-content:space-between; }
-.badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
-.badge-hilang { background: var(--red); color: white; }
-.badge-temuan { background: var(--green); color: white; }
-.card-title { font-size: 1.15rem; color: var(--navy); margin-bottom: 5px; }
-.card-meta { font-size: 0.85rem; color: #64748B; margin-bottom: 15px; }
-.btn-card { display: block; text-align: center; width: 100%; padding: 10px; background: white; border: 1px solid var(--border); color: #475569; border-radius: 4px; cursor: pointer; transition: 0.2s;}
-.btn-card:hover { border-color: var(--blue); color: var(--blue); }
-
-/* Warna Status Badge Dinamis */
-.badge-aktif { background: var(--yellow) !important; color: white !important; }
-.badge-serah-terima { background: #3B82F6 !important; color: white !important; }
-.badge-selesai { background: var(--green) !important; color: white !important; }
-
-/* Perbaikan Layout Khusus Dashboard Card (Desktop/Laptop Anti-Potong) */
-.dash-card { flex-direction: row !important; height: auto !important; min-height: 180px; align-items: stretch; }
-.dash-card-img { width: 250px !important; height: auto !important; flex-shrink: 0; }
-
 /* ==========================================
-    DESAIN FILTER BARU (Persis Foto 1 & 2)
+   PERBAIKAN: Radio Group Kanan-Kiri & Banner Peringatan
    ========================================== */
-.filter-bar { display: flex; gap: 15px; margin-bottom: 30px; background: white; padding: 15px; border-radius: 8px; border: 1px solid var(--border); align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-.filter-input-group { display: flex; align-items: center; flex: 2; border: 1px solid var(--border); border-radius: 4px; padding: 0 10px; background: white; }
-.filter-input-group span { color: #94A3B8; }
-.filter-input-group input { border: none; outline: none; box-shadow: none; padding: 10px; width: 100%; background:transparent; }
-.filter-select { flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 4px; outline:none; color: #475569; background:white;}
-.filter-btn { flex: 1; padding: 11px 20px; white-space: nowrap; }
+/* Radio Button Flexbox (Kanan-Kiri di Laptop) */
+.radio-group { display: flex; flex-direction: row; gap: 30px; align-items: center; margin-top: 5px; }
+.radio-group label { font-weight: normal; font-size: 0.95rem; margin-bottom: 0; cursor: pointer; display: flex; align-items: center; gap: 8px; }
 
-/* ==========================================
-    DESAIN KOTAK DETAIL (Persis Foto 3 & 4)
-   ========================================== */
-.detail-header { background: white; padding: 35px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
-.detail-meta { font-size: 0.95rem; color: #64748B; padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
-.detail-info-row { display: flex; gap: 15px; margin-bottom: 20px; }
-.info-box { flex: 1; background: #F8FAFC; padding: 15px 20px; border-radius: 6px; border: 1px solid var(--border); }
-
-.detail-box { background: white; padding: 35px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
-.detail-box h3 { color: var(--navy); margin-bottom: 20px; font-size: 1.3rem; border-bottom: 2px solid var(--border); padding-bottom:10px; }
-
-.claim-item { border: 1px solid var(--border); padding: 20px; border-radius: 8px; margin-bottom: 15px; background: #F8FAFC; transition: 0.2s; }
-.claim-item:hover { border-color: #CBD5E1; }
-.badge-pending { background: var(--yellow); color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; }
-
-/* Notif & Footer */
-.notif-card { background: white; padding: 20px; border-radius: 8px; border: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.notif-card p { font-weight: 600; font-size: 0.95rem; }
-.footer { text-align: center; padding: 20px; color: #94A3B8; font-size: 0.85rem; margin-top: auto; }
-
-/* ==========================================
-    RESPONSIVE LAYOUT (Layar HP / Tablet Kecil)
-    Jaminan 100% Rapi dan Tidak Terpotong
-   ========================================== */
-@media screen and (max-width: 768px) {
-    * { box-sizing: border-box !important; max-width: 100% !important; }
-
-    /* Navigasi Hamburger */
-    .navbar { padding: 15px !important; }
-    .hamburger-menu { display: block !important; font-size: 1.5rem !important; color: white !important; cursor: pointer !important; user-select: none !important; }
-    .nav-right { display: none !important; flex-direction: column !important; width: 100% !important; background-color: var(--navy) !important; position: absolute !important; top: 60px !important; left: 0 !important; padding: 20px !important; box-shadow: 0 10px 15px rgba(0,0,0,0.1) !important; gap: 15px !important; z-index: 999 !important; text-align: center !important; }
-    #nav-guest, #nav-auth { flex-direction: column !important; width: 100% !important; gap: 12px !important; }
-    .nav-right.show { display: flex !important; }
-    .nav-link, .btn-outline-sm, .btn-yellow-sm { width: 100% !important; text-align: center !important; padding: 12px !important; }
-
-    /* Membungkus Container Utama Agar Ada Margin di Kiri-Kanan Layar HP */
-    .container, .form-container, .page { width: 100% !important; padding: 20px 15px !important; margin: 0 !important; }
-    
-    /* Layout Komponen Lain Susun ke Bawah */
-    .filter-bar { flex-direction: column !important; gap: 15px !important; padding: 20px !important; }
-    .filter-input-group, .filter-select, .filter-btn { width: 100% !important; }
-    
-    .stats-container { grid-template-columns: 1fr !important; gap: 15px !important; }
-    .hero-buttons { flex-direction: column !important; gap: 10px !important; }
-    .hero-buttons button { width: 100% !important; }
-    
-    /* Perbaikan Form Lapor */
-    .form-row { flex-direction: column !important; gap: 0px !important;}
-    .half { width: 100% !important; margin-bottom: 15px !important;}
-    
-    /* Perbaikan Kotak Detail (Foto 3 & 4) untuk HP */
-    .detail-header { padding: 20px !important; }
-    .detail-box { padding: 20px !important; }
-    .detail-info-row { flex-direction: column !important; gap: 10px !important; } /* Kotak info Kategori/Tanggal turun ke bawah */
-    .info-box { width: 100% !important; }
-
-    /* Kartu Galeri & Dashboard Mobile */
-    .card { flex-direction: column !important; width: 100% !important; height: auto !important; margin-bottom: 15px !important; }
-    .card-img-placeholder, .card-img-placeholder img { width: 100% !important; height: 250px !important; object-fit: cover !important; border-radius: 8px 8px 0 0 !important; }
-    #explore-gallery, #my-reports { display: flex !important; flex-direction: column !important; align-items: center !important; }
-
-    /* Tambahan Responsif untuk Dashboard Mobile */
-    .dash-card { flex-direction: column !important; }
-    .dash-card-img { width: 100% !important; height: 220px !important; }
+/* Banner Peringatan Lapor Dinamis */
+.alert-banner { 
+    background: #FEF3C7; 
+    color: #92400E; 
+    padding: 15px 20px; 
+    border-radius: 8px; 
+    border: 1px solid #FCD34D; 
+    margin: 0 auto 30px auto; 
+    font-size: 0.95rem; 
+    max-width: 800px; 
+    width: 100%; /* Memastikan lebarnya responsif */
+    line-height: 1.5; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
 }
 
-@media screen and (min-width: 769px) {
-    .hamburger-menu { display: none !important; }
-}
+.ai-validation-box { margin-top: 10px; padding: 15px; background: #F1F5
