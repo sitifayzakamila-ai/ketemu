@@ -106,8 +106,17 @@ textarea { min-height: 100px; resize: vertical; }
 .btn-card { display: block; text-align: center; width: 100%; padding: 10px; background: white; border: 1px solid var(--border); color: #475569; border-radius: 4px; cursor: pointer; transition: 0.2s;}
 .btn-card:hover { border-color: var(--blue); color: var(--blue); }
 
+/* Warna Status Badge Dinamis */
+.badge-aktif { background: var(--yellow) !important; color: white !important; }
+.badge-serah-terima { background: #3B82F6 !important; color: white !important; }
+.badge-selesai { background: var(--green) !important; color: white !important; }
+
+/* Perbaikan Layout Khusus Dashboard Card (Desktop/Laptop Anti-Potong) */
+.dash-card { flex-direction: row !important; height: auto !important; min-height: 180px; align-items: stretch; }
+.dash-card-img { width: 250px !important; height: auto !important; flex-shrink: 0; }
+
 /* ==========================================
-   DESAIN FILTER BARU (Persis Foto 1 & 2)
+    DESAIN FILTER BARU (Persis Foto 1 & 2)
    ========================================== */
 .filter-bar { display: flex; gap: 15px; margin-bottom: 30px; background: white; padding: 15px; border-radius: 8px; border: 1px solid var(--border); align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
 .filter-input-group { display: flex; align-items: center; flex: 2; border: 1px solid var(--border); border-radius: 4px; padding: 0 10px; background: white; }
@@ -117,7 +126,7 @@ textarea { min-height: 100px; resize: vertical; }
 .filter-btn { flex: 1; padding: 11px 20px; white-space: nowrap; }
 
 /* ==========================================
-   DESAIN KOTAK DETAIL (Persis Foto 3 & 4)
+    DESAIN KOTAK DETAIL (Persis Foto 3 & 4)
    ========================================== */
 .detail-header { background: white; padding: 35px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
 .detail-meta { font-size: 0.95rem; color: #64748B; padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
@@ -137,8 +146,8 @@ textarea { min-height: 100px; resize: vertical; }
 .footer { text-align: center; padding: 20px; color: #94A3B8; font-size: 0.85rem; margin-top: auto; }
 
 /* ==========================================
-   RESPONSIVE LAYOUT (Layar HP / Tablet Kecil)
-   Jaminan 100% Rapi dan Tidak Terpotong
+    RESPONSIVE LAYOUT (Layar HP / Tablet Kecil)
+    Jaminan 100% Rapi dan Tidak Terpotong
    ========================================== */
 @media screen and (max-width: 768px) {
     * { box-sizing: border-box !important; max-width: 100% !important; }
@@ -172,10 +181,14 @@ textarea { min-height: 100px; resize: vertical; }
     .detail-info-row { flex-direction: column !important; gap: 10px !important; } /* Kotak info Kategori/Tanggal turun ke bawah */
     .info-box { width: 100% !important; }
 
-    /* Kartu Galeri */
+    /* Kartu Galeri & Dashboard Mobile */
     .card { flex-direction: column !important; width: 100% !important; height: auto !important; margin-bottom: 15px !important; }
     .card-img-placeholder, .card-img-placeholder img { width: 100% !important; height: 250px !important; object-fit: cover !important; border-radius: 8px 8px 0 0 !important; }
     #explore-gallery, #my-reports { display: flex !important; flex-direction: column !important; align-items: center !important; }
+
+    /* Tambahan Responsif untuk Dashboard Mobile */
+    .dash-card { flex-direction: column !important; }
+    .dash-card-img { width: 100% !important; height: 220px !important; }
 }
 
 @media screen and (min-width: 769px) {
