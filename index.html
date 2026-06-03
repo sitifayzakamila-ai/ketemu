@@ -66,17 +66,33 @@
         </div>
     </div>
 
+    <!-- Page: Explore (Daftar Laporan) -->
     <div id="page-explore" class="page">
-        <h2 class="section-title">Daftar Laporan Kampus</h2>
-        <p style="color: #64748B; margin-bottom: 20px;">Cari barang yang hilang atau ditemukan di area Kampus.</p>
+        <h2 class="section-title" style="margin-bottom: 5px;">Eksplorasi Barang</h2>
+        <p style="color: #64748B; margin-bottom: 25px;">Cari barang hilang atau temuan di area kampus dengan cepat.</p>
+        
+        <!-- Filter Bar Persis Foto 1 & 2 -->
         <div class="filter-bar">
-            <input type="text" class="search-input" placeholder="Cari barang atau lokasi..." id="search-input" onkeyup="filterLaporan()">
+            <div class="filter-input-group">
+                <span>🔍</span>
+                <input type="text" id="search-input" placeholder="Cari nama barang atau lokasi..." onkeyup="filterLaporan()">
+            </div>
+            <select class="filter-select" id="filter-kategori" onchange="filterLaporan()">
+                <option value="Semua">Semua Kategori</option>
+                <option value="Elektronik">Elektronik</option>
+                <option value="Dokumen">Dokumen</option>
+                <option value="Dompet">Dompet / Tas</option>
+                <option value="Kunci">Kunci Kendaraan</option>
+                <option value="Lainnya">Lainnya</option>
+            </select>
             <select class="filter-select" id="filter-jenis" onchange="filterLaporan()">
                 <option value="Semua">Semua Jenis</option>
                 <option value="Hilang">Barang Hilang</option>
                 <option value="Temuan">Barang Temuan</option>
             </select>
+            <button class="btn-yellow filter-btn" onclick="filterLaporan()">Filter Data</button>
         </div>
+
         <div class="explore-grid" id="explore-gallery"></div>
     </div>
 
