@@ -236,28 +236,58 @@ async function renderDashboard() {
     });
 }
 
-async function renderExplore() {
+// ==========================================
+// LOGIKA FILTER PENCARIAN (FOTO 1 & 2)
+// ==========================================
+async function renderExplore() { filterLaporan(); }
+
+async function filterLaporan() {
+    const searchVal = document.getElementById('search-input').value.toLowerCase();
+    const kategoriVal = document.getElementById('filter-kategori').value;
+    const jenisVal = document.getElementById('filter-jenis').value;
     const container = document.getElementById('explore-gallery');
-    container.innerHTML = '<p>Memuat database...</p>';
     
-    const { data: results } = await db.from('laporan').select('*').eq('status', 'Aktif').order('id', { ascending: false });
-    if(!results || results.length === 0){ container.innerHTML = '<p>Belum ada laporan aktif.</p>'; return; }
+    container.innerHTML = '<p style="text-align:center; width:100%; color:#64748B;">Mencari data database...</p>';
+
+    // Buat query dasar
+    let query = db.from('laporan').select('*').eq('status', 'Aktif').order('id', { ascending: false });
     
+    // Tambahkan filter jika tidak pilih "Semua"
+    if (jenisVal !== 'Semua') query = query.eq('jenis', jenisVal);
+    if (kategoriVal !== 'Semua') query = query.eq('kategori', kategoriVal);
+
+    const { data: results } = await query;
+    if(!results || results.length === 0){ container.innerHTML = '<p style="text-align:center; width:100%; color:#64748B;">Tidak ada barang yang sesuai filter.</p>'; return; }
+
+    // Filter teks pencarian (Judul / Lokasi)
+    let finalResults = results;
+    if (searchVal) {
+        finalResults = results.filter(item => item.judul.toLowerCase().includes(searchVal) || item.lokasi.toLowerCase().includes(searchVal));
+    }
+
     container.innerHTML = '';
-    results.forEach(item => {
+    if(finalResults.length === 0){ container.innerHTML = '<p style="text-align:center; width:100%; color:#64748B;">Pencarian tidak ditemukan.</p>'; return; }
+
+    finalResults.forEach(item => {
         container.innerHTML += `
             <div class="card">
                 <div class="card-img-placeholder"><img src="${item.foto}"></div>
                 <div class="card-body">
-                    <span class="badge ${item.jenis === 'Hilang' ? 'badge-hilang' : 'badge-temuan'}">${item.jenis.toUpperCase()}</span>
-                    <h3 class="card-title">${item.judul}</h3>
-                    <p class="card-meta">📍 ${item.lokasi}</p>
-                    <button class="btn-card" onclick="openDetail(${item.id})">Lihat Detail</button>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span class="badge ${item.jenis === 'Hilang' ? 'badge-hilang' : 'badge-temuan'}">${item.jenis.toUpperCase()}</span>
+                        <span style="font-size: 0.75rem; color:#64748B; font-weight:600;">${item.tanggal}</span>
+                    </div>
+                    <h3 class="card-title" style="margin-top: 10px;">${item.judul}</h3>
+                    <p class="card-meta" style="color:#DC2626; font-weight:600;">📍 ${item.lokasi}</p>
+                    <button class="btn-card" style="margin-top:15px;" onclick="openDetail(${item.id})">Lihat Detail Laporan</button>
                 </div>
             </div>`;
     });
 }
 
+// ==========================================
+// LOGIKA DETAIL BARANG & KLAIM (FOTO 3 & 4)
+// ==========================================
 async function openDetail(id) {
     const container = document.getElementById('page-detail');
     container.innerHTML = '<p>Memuat detail barang...</p>';
@@ -269,31 +299,97 @@ async function openDetail(id) {
     let actionBox = '';
     if (currentUser) {
         const isPembuatPos = currentUser.id === item.user_id;
+
         if (item.status === 'Aktif') {
             if (isPembuatPos) {
+                // FOTO 4: Pembuat pos melihat siapa saja yang mencoba klaim
                 let listHTML = '';
                 klaimList.filter(k => k.status === 'PENDING').forEach(k => {
-                    listHTML += `<div class="action-box"><h4>Tanggapan dari: ${k.claimer_nama}</h4><p>"${k.pesan}"</p><button class="btn-green-full" style="margin-top:10px;" onclick="terimaKlaim(${k.id}, ${item.id})">Terima & Atur Drop Point</button></div>`;
+                    listHTML += `
+                    <div class="claim-item">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+                            <strong style="font-size:1.1rem; color:var(--navy);">${k.claimer_nama}</strong>
+                            <span class="badge-pending">PENDING</span>
+                        </div>
+                        <p style="color: #475569; font-size: 0.95rem; margin-bottom: 15px; font-style: italic; word-wrap: break-word;">"${k.pesan}"</p>
+                        <div style="display:flex; gap: 10px;">
+                            <button class="btn-green-full" style="flex: 2; margin:0;" onclick="terimaKlaim(${k.id}, ${item.id})">Terima (Cocok)</button>
+                            <button class="btn-outline-red" style="flex: 1; margin:0;" onclick="tolakKlaim(${k.id})">Tolak</button>
+                        </div>
+                    </div>`;
                 });
-                actionBox = listHTML ? `<div class="detail-box"><h3>Verifikasi Masuk</h3>${listHTML}</div>` : `<div class="detail-box"><p>Belum ada tanggapan masuk.</p></div>`;
+                actionBox = `
+                <div class="detail-box">
+                    <h3>Verifikasi & Klaim</h3>
+                    ${listHTML ? listHTML : '<p style="color:#64748B;">Belum ada tanggapan masuk untuk barang ini.</p>'}
+                </div>`;
             } else {
-                const btnText = item.jenis === 'Hilang' ? 'Saya Menemukan Barang Ini' : 'Ini Barang Milik Saya (Klaim)';
-                actionBox = `<div class="detail-box"><h3>Beri Tanggapan</h3><textarea id="klaim-pesan" class="claim-input" placeholder="Sebutkan detail barang..."></textarea><button class="btn-blue-full" onclick="ajukanKlaim(${item.id}, ${item.user_id}, '${item.judul}')">${btnText}</button></div>`;
+                // FOTO 3: Orang lain mengajukan klaim
+                // Logika Advance: Kalimat berubah tergantung ini laporan kehilangan atau penemuan
+                const infoText = item.jenis === 'Hilang' ? 
+                    "Menemukan barang ini? Bagi yang menemukan, silakan ajukan klaim dan sebutkan lokasi detail atau bukti penemuan." : 
+                    "Merasa kehilangan? Silakan ajukan klaim dan sebutkan isi atau ciri khusus di dalam barang ini sebagai bukti.";
+
+                actionBox = `
+                <div class="detail-box" style="border:none; padding:0;">
+                    <p style="color: #475569; font-size: 0.9rem; margin-bottom: 15px; line-height:1.5;">${infoText}</p>
+                    <div style="border: 1px solid #93C5FD; padding: 25px; border-radius: 8px; background: #EFF6FF;">
+                        <h3 style="color:var(--blue); margin-bottom:15px;">Ajukan Klaim</h3>
+                        <textarea id="klaim-pesan" class="claim-input" placeholder="Ketik bukti atau ciri khusus di sini..." style="border-color:#BFDBFE;"></textarea>
+                        <button class="btn-blue-full" style="margin-top:0;" onclick="ajukanKlaim(${item.id}, ${item.user_id}, '${item.judul}')">Kirim Bukti Verifikasi</button>
+                    </div>
+                </div>`;
             }
         } 
         else if (item.status === 'Menunggu Serah Terima') {
             const klaimDiterima = klaimList.find(k => k.status === 'DITERIMA');
             let isPemilikAsli = (item.jenis === 'Hilang') ? isPembuatPos : (currentUser.id === klaimDiterima.claimer_id);
             let idPenemu = (item.jenis === 'Hilang') ? klaimDiterima.claimer_id : item.user_id;
-            actionBox = `<div class="detail-box" style="border-color: var(--yellow);"><h3>🤝 Status: Menunggu Serah Terima</h3><p>Dititipkan di: <strong>${klaimDiterima.drop_point}</strong></p>${isPemilikAsli ? `<button class="btn-yellow-full" onclick="selesaikanLaporan(${item.id}, ${idPenemu})">Konfirmasi Barang Diterima & Beri Poin Kejujuran</button>` : `<p style="margin-top:10px; color:var(--green);">Menunggu pemilik asli mengambil barang.</p>`}</div>`;
+            actionBox = `<div class="detail-box" style="border-color: var(--yellow);"><h3>🤝 Menunggu Serah Terima</h3><p>Dititipkan di: <strong>${klaimDiterima.drop_point}</strong></p>${isPemilikAsli ? `<button class="btn-yellow-full" onclick="selesaikanLaporan(${item.id}, ${idPenemu})">Konfirmasi Diterima & Beri Poin</button>` : `<p style="margin-top:10px; color:var(--green);">Menunggu pemilik asli mengambil barang.</p>`}</div>`;
         }
         else if (item.status === 'Selesai') {
-             actionBox = `<div class="detail-box" style="border-color: var(--green);"><h3>✅ Laporan Selesai</h3><p>Barang telah berhasil dikembalikan.</p></div>`;
+             actionBox = `<div class="detail-box" style="border-color: var(--green); background:#F0FDF4;"><h3>✅ Laporan Selesai</h3><p>Barang telah berhasil dikembalikan ke pemiliknya.</p></div>`;
         }
-    } else { actionBox = `<div class="detail-box"><p><a href="#" onclick="navigate('login')">Masuk</a> untuk berinteraksi.</p></div>`; }
+    } else { actionBox = `<div class="detail-box"><p><a href="#" onclick="navigate('login')">Masuk</a> untuk mengajukan klaim.</p></div>`; }
 
-    const gpsBadge = item.gps ? `<br><a href="${item.gps}" target="_blank" class="gps-link">🗺️ Lihat di Google Maps</a>` : '';
-    container.innerHTML = `<div class="detail-header"><span class="badge ${item.jenis === 'Hilang' ? 'badge-hilang' : 'badge-temuan'}">${item.jenis.toUpperCase()}</span><span style="float:right; font-weight:bold; color:var(--navy);">STATUS: ${item.status.toUpperCase()}</span><h2>${item.judul}</h2><p class="detail-meta">📍 Lokasi: ${item.lokasi} ${gpsBadge} <br>👤 Pelapor: ${item.pelapor}</p><label>Keterangan:</label><p>${item.deskripsi}</p></div>${actionBox}`;
+    // FOTO 3 & 4: Header Detail Barang dengan Kotak Kategori/Tanggal sejajar
+    container.innerHTML = `
+        <div class="detail-header">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h2 style="font-size: 1.5rem; margin: 0; color: var(--navy);">${item.judul}</h2>
+                <span style="font-weight:bold; color:var(--navy); font-size: 0.75rem; border: 1px solid var(--border); padding: 5px 10px; border-radius: 4px; white-space:nowrap;">STATUS: ${item.status.toUpperCase()}</span>
+            </div>
+            
+            <p class="detail-meta">📍 Lokasi: ${item.lokasi} <span style="margin:0 10px; color:#CBD5E1;">|</span> 👤 Pelapor: ${item.pelapor}</p>
+
+            <div class="detail-info-row">
+                <div class="info-box">
+                    <span style="font-size:0.8rem; color:#64748B;">Kategori:</span><br>
+                    <strong style="color:var(--navy); font-size:0.95rem;">${item.kategori}</strong>
+                </div>
+                <div class="info-box">
+                    <span style="font-size:0.8rem; color:#64748B;">Tanggal:</span><br>
+                    <strong style="color:var(--navy); font-size:0.95rem;">${item.tanggal}</strong>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <h4 style="color:var(--navy); margin-bottom:5px; font-size:0.9rem;">Keterangan:</h4>
+                <p style="color:#475569; font-size:0.95rem; line-height: 1.6; word-wrap: break-word;">${item.deskripsi}</p>
+            </div>
+        </div>
+        ${actionBox}
+    `;
+}
+
+// Tambahkan Fungsi Menolak Klaim
+async function tolakKlaim(klaimId) {
+    if(!confirm("Yakin ingin menolak bukti klaim ini?")) return;
+    await db.from('klaim').update({ status: 'DITOLAK' }).eq('id', klaimId);
+    alert("Klaim berhasil ditolak.");
+    // Refresh otomatis halaman detailnya
+    const { data: k } = await db.from('klaim').select('laporan_id').eq('id', klaimId).single();
+    openDetail(k.laporan_id);
 }
 
 async function ajukanKlaim(laporanId, pemilikPosId, judulBarang) {
