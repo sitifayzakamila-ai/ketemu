@@ -17,7 +17,10 @@
     <nav class="navbar">
         <div class="nav-left">
             <div class="logo" onclick="navigate('home')">🔍 KETEMU 
-                <span style="font-size: 0.8rem; font-weight: normal; margin-left: 10px; color: #94A3B8; cursor: pointer;" onclick="event.stopPropagation(); navigate('explore')">Daftar Laporan</span>
+                <span style="font-size: 0.85rem; font-weight: 500; margin-left: 15px; color: #CBD5E1; cursor: pointer; transition: 0.2s;" onclick="event.stopPropagation(); navigate('explore')" onmouseover="this.style.color='white'" onmouseout="this.style.color='#CBD5E1'">Daftar Laporan</span>
+                
+                <!-- Dashboard Saya pindah ke kiri, hanya muncul saat login -->
+                <span class="auth-only" style="font-size: 0.85rem; font-weight: 500; margin-left: 15px; color: #CBD5E1; cursor: pointer; transition: 0.2s; display: none;" onclick="event.stopPropagation(); navigate('dashboard')" onmouseover="this.style.color='white'" onmouseout="this.style.color='#CBD5E1'">Dashboard Saya</span>
             </div>
         </div>
         
@@ -30,8 +33,6 @@
             </div>
             
             <div id="nav-auth" style="display: none; gap: 15px; align-items: center;">
-                <span class="nav-link" onclick="navigate('dashboard')" style="font-weight: 600; color: white;">Dashboard Saya</span>
-                
                 <div style="position: relative; cursor: pointer; padding: 5px;" onclick="navigate('notif')">
                     <span style="font-size: 1.2rem;">🔔</span>
                     <span id="notif-badge" class="badge-dot" style="display: none;"></span>
@@ -70,6 +71,7 @@
         </div>
     </div>
 
+    <!-- Page: Explore (Daftar Laporan) -->
     <div id="page-explore" class="page">
         <h2 class="section-title" style="margin-bottom: 5px;">Eksplorasi Barang</h2>
         <p style="color: #64748B; margin-bottom: 25px;">Cari barang hilang atau temuan di area kampus dengan cepat.</p>
@@ -112,6 +114,7 @@
     </div>
 
     <div id="page-lapor" class="page">
+        <!-- Banner Peringatan Dinamis Persegi Panjang -->
         <div class="alert-banner">
             ⚠️ <strong>Peringatan:</strong> Sebelum membuat laporan baru, pastikan Anda sudah mengecek daftar laporan. Siapa tahu barang Anda sudah ditemukan oleh orang lain!
         </div>
@@ -123,6 +126,7 @@
         <form class="report-form" onsubmit="submitLaporan(event)">
             <div class="form-group">
                 <label>Jenis Kejadian</label>
+                <!-- Radio group sudah diatur di CSS agar sejajar di laptop & turun di HP -->
                 <div class="radio-group">
                     <label><input type="radio" name="jenis" value="Hilang" checked> Kehilangan Barang</label>
                     <label><input type="radio" name="jenis" value="Temuan"> Penemuan Barang</label>
@@ -222,6 +226,6 @@
         © 2026 KETEMU — Kelompok 5 — IPB University — MVP
     </footer>
 
-    <script src="app.js?v=999"></script>
+    <script src="app.js?v=1001"></script>
 </body>
 </html>
