@@ -18,8 +18,7 @@
         <div class="nav-left">
             <div class="logo" onclick="navigate('home')">🔍 KETEMU 
                 <span style="font-size: 0.8rem; font-weight: normal; margin-left: 10px; color: #94A3B8; cursor: pointer;" onclick="event.stopPropagation(); navigate('explore')">Daftar Laporan</span>
-    </div>
-
+            </div>
         </div>
         
         <div class="hamburger-menu" onclick="toggleMobileMenu()">☰</div>
@@ -31,6 +30,8 @@
             </div>
             
             <div id="nav-auth" style="display: none; gap: 15px; align-items: center;">
+                <span class="nav-link" onclick="navigate('dashboard')" style="font-weight: 600; color: white;">Dashboard Saya</span>
+                
                 <div style="position: relative; cursor: pointer; padding: 5px;" onclick="navigate('notif')">
                     <span style="font-size: 1.2rem;">🔔</span>
                     <span id="notif-badge" class="badge-dot" style="display: none;"></span>
@@ -69,12 +70,10 @@
         </div>
     </div>
 
-    <!-- Page: Explore (Daftar Laporan) -->
     <div id="page-explore" class="page">
         <h2 class="section-title" style="margin-bottom: 5px;">Eksplorasi Barang</h2>
         <p style="color: #64748B; margin-bottom: 25px;">Cari barang hilang atau temuan di area kampus dengan cepat.</p>
         
-        <!-- Filter Bar Persis Foto 1 & 2 -->
         <div class="filter-bar">
             <div class="filter-input-group">
                 <span>🔍</span>
@@ -113,6 +112,10 @@
     </div>
 
     <div id="page-lapor" class="page">
+        <div class="alert-banner">
+            ⚠️ <strong>Peringatan:</strong> Sebelum membuat laporan baru, pastikan Anda sudah mengecek daftar laporan. Siapa tahu barang Anda sudah ditemukan oleh orang lain!
+        </div>
+
         <div class="form-header">
             <h2>Buat Laporan Baru</h2>
             <p>Sistem dilengkapi AI Moderation untuk keamanan laporan.</p>
@@ -126,7 +129,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <label>Nama / Judul Barang</label>
+                <label>Nama / Judul Barang <span style="font-size: 0.8rem; font-weight: normal; color: #64748B;">(AI NLP Filtered)</span></label>
                 <input type="text" id="lap-judul" required placeholder="Contoh: Dompet Cokelat">
             </div>
             <div class="form-row">
@@ -146,13 +149,13 @@
                 </div>
             </div>
             <div class="form-group">
-                <label>Lokasi di Kampus</label>
+                <label>Lokasi di Kampus <span style="font-size: 0.8rem; font-weight: normal; color: #64748B;">(AI NLP Filtered)</span></label>
                 <input type="text" id="lap-lokasi" required placeholder="Contoh: Gedung Kuliah A">
                 <button type="button" class="btn-transparent" style="text-align: left; padding: 5px 0; font-size:0.85rem;" onclick="getLocationGPS()">📍 Gunakan GPS Lokasi Saat Ini</button>
                 <span id="gps-status" style="font-size: 0.8rem; margin-left: 10px; color: var(--green);"></span>
             </div>
             <div class="form-group">
-                <label>Keterangan Detail</label>
+                <label>Keterangan Detail <span style="font-size: 0.8rem; font-weight: normal; color: #64748B;">(AI NLP Filtered)</span></label>
                 <textarea id="lap-deskripsi" required placeholder="Sebutkan ciri-ciri khusus (jika hilang) atau kondisi barang (jika menemukan)..."></textarea>
             </div>
             <div class="form-group">
@@ -219,6 +222,6 @@
         © 2026 KETEMU — Kelompok 5 — IPB University — MVP
     </footer>
 
-    <script src="app.js?v=888"></script>
+    <script src="app.js?v=999"></script>
 </body>
 </html>
