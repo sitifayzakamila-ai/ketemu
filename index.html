@@ -6,45 +6,41 @@
     <title>KETEMU - Daftar Laporan</title>
     <link rel="stylesheet" href="style.css">
     
-    <!-- Load TensorFlow.js Standar -->
-    <script src="https://cdn.jsdeliver.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
-
-    <!-- Load MobileNet Pengecek Objek -->
-    <script src="https://cdn.jsdeliver.net/npm/@tensorflow-models/mobilenet@2.1.0/dist/mobilenet.min.js"></script>
-
-    <!-- Load NSFWJS Alternatif dari jsDelivr -->
-    <script src="https://cdn.jsdeliver.net/npm/nsfwjs@2.4.1/dist/nsfwjs.min.js"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.18.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.0/dist/mobilenet.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/nsfwjs@2.4.1/dist/nsfwjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
     <div id="toast" class="toast" style="display: none;"></div>
 
     <nav class="navbar">
-    <div class="nav-left">
-        <div class="logo" onclick="navigate('home')">🔍 KETEMU</div>
-    </div>
-    
-    <div class="hamburger-menu" onclick="toggleMobileMenu()">☰</div>
-    
-    <div class="nav-right" id="nav-menu-container">
-        <div id="nav-guest" style="display: flex; gap: 15px; align-items: center;">
-            <span class="nav-link" onclick="navigate('explore')">Daftar Laporan</span>
-            <button class="btn-outline-sm" onclick="navigate('login')">Masuk</button>
-            <button class="btn-yellow-sm" onclick="navigate('register')">Daftar</button>
+        <div class="nav-left">
+            <div class="logo" onclick="navigate('home')">🔍 KETEMU <span style="font-size: 0.8rem; font-weight: normal; margin-left: 10px; color: #94A3B8;">Daftar Laporan</span></div>
         </div>
         
-        <div id="nav-auth" style="display: none; gap: 15px; align-items: center;">
-            <span class="nav-link" onclick="navigate('explore')">Daftar Laporan</span>
-            <span class="nav-link" onclick="navigate('dashboard')">Dashboard</span>
-            <span id="nav-poin" class="poin-badge">0 Poin</span>
-            <span id="nav-username" style="font-weight: 600; color: white;">User</span>
-            <button class="btn-yellow-sm" onclick="logout()">Keluar</button>
+        <div class="hamburger-menu" onclick="toggleMobileMenu()">☰</div>
+        
+        <div class="nav-right" id="nav-menu-container">
+            <div id="nav-guest" style="display: flex; gap: 15px; align-items: center;">
+                <button class="btn-outline-sm" onclick="navigate('login')">Masuk</button>
+                <button class="btn-yellow-sm" onclick="navigate('register')">Daftar</button>
+            </div>
+            
+            <div id="nav-auth" style="display: none; gap: 15px; align-items: center;">
+                <div style="position: relative; cursor: pointer; padding: 5px;" onclick="navigate('notif')">
+                    <span style="font-size: 1.2rem;">🔔</span>
+                    <span id="notif-badge" class="badge-dot" style="display: none;"></span>
+                </div>
+                <span id="nav-poin" class="poin-badge">0 Poin</span>
+                <span id="nav-username" style="font-weight: 600; color: white; margin: 0 10px;">User</span>
+                <button class="btn-yellow-sm" onclick="navigate('lapor')">Lapor</button>
+                <button class="btn-outline-sm" onclick="logout()">Keluar</button>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-    <main id="page-home" class="page active">
+    <div id="page-home" class="page active">
         <div class="hero-section">
             <h1 class="hero-title">KETEMU 🔍</h1>
             <p class="hero-subtitle">Platform Lost & Found sederhana untuk warga kampus. Laporkan barang hilang atau temuan di area lingkungan kampus.</p>
@@ -54,17 +50,113 @@
             </div>
             <div class="hero-buttons" id="hero-auth" style="display: none;">
                 <button class="btn-outline" onclick="navigate('dashboard')">Dashboard Saya</button>
-                <button class="btn-yellow" onclick="navigate('lapor')">+ Buat Laporan</button>
+                <button class="btn-yellow" onclick="navigate('lapor')">Buat Laporan</button>
             </div>
         </div>
         <div class="stats-container">
-            <div class="stat-box"><h2 id="stat-hilang">2</h2><p>BARANG HILANG</p></div>
-            <div class="stat-box"><h2 id="stat-temuan" class="text-green">1</h2><p>BARANG TEMUAN</p></div>
-            <div class="stat-box"><h2 id="stat-user">3</h2><p>PENGGUNA AKTIF</p></div>
+            <div class="stat-box">
+                <h2 id="stat-hilang">0</h2><p>BARANG HILANG</p>
+            </div>
+            <div class="stat-box">
+                <h2 id="stat-temuan" class="text-green">0</h2><p>BARANG TEMUAN</p>
+            </div>
+            <div class="stat-box">
+                <h2 id="stat-user">0</h2><p>PENGGUNA AKTIF</p>
+            </div>
         </div>
-    </main>
+    </div>
 
-    <main id="page-login" class="page auth-page">
+    <div id="page-explore" class="page">
+        <h2 class="section-title">Daftar Laporan Kampus</h2>
+        <p style="color: #64748B; margin-bottom: 20px;">Cari barang yang hilang atau ditemukan di area Kampus.</p>
+        <div class="filter-bar">
+            <input type="text" class="search-input" placeholder="Cari barang atau lokasi..." id="search-input" onkeyup="filterLaporan()">
+            <select class="filter-select" id="filter-jenis" onchange="filterLaporan()">
+                <option value="Semua">Semua Jenis</option>
+                <option value="Hilang">Barang Hilang</option>
+                <option value="Temuan">Barang Temuan</option>
+            </select>
+        </div>
+        <div class="explore-grid" id="explore-gallery"></div>
+    </div>
+
+    <div id="page-dashboard" class="page">
+        <div class="profile-card">
+            <div>
+                <h2 id="dash-nama" style="color: var(--navy); margin-bottom: 5px;">Nama User</h2>
+                <p id="dash-email" style="color: #64748B; margin-bottom: 15px;">email@student.ac.id</p>
+                <p style="font-weight: 600;">Poin Kejujuran: <span id="dash-poin" class="text-orange">0</span></p>
+            </div>
+            <button class="btn-yellow" onclick="navigate('lapor')">+ Buat Laporan</button>
+        </div>
+        <h3 class="section-title">Riwayat Laporan Saya</h3>
+        <div class="report-list" id="my-reports"></div>
+    </div>
+
+    <div id="page-lapor" class="page">
+        <div class="form-header">
+            <h2>Buat Laporan Baru</h2>
+            <p>Sistem dilengkapi AI Moderation untuk keamanan laporan.</p>
+        </div>
+        <form class="report-form" onsubmit="submitLaporan(event)">
+            <div class="form-group">
+                <label>Jenis Kejadian</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="jenis" value="Hilang" checked> Kehilangan Barang</label>
+                    <label><input type="radio" name="jenis" value="Temuan"> Penemuan Barang</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Nama / Judul Barang</label>
+                <input type="text" id="lap-judul" required placeholder="Contoh: Dompet Cokelat">
+            </div>
+            <div class="form-row">
+                <div class="form-group half">
+                    <label>Kategori</label>
+                    <select id="lap-kategori">
+                        <option value="Elektronik">Elektronik (Laptop, HP)</option>
+                        <option value="Dokumen">Dokumen (KTM, KTP)</option>
+                        <option value="Dompet">Dompet / Tas</option>
+                        <option value="Kunci">Kunci Kendaraan</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                </div>
+                <div class="form-group half">
+                    <label>Tanggal</label>
+                    <input type="date" id="lap-tanggal" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Lokasi di Kampus</label>
+                <input type="text" id="lap-lokasi" required placeholder="Contoh: Gedung Kuliah A">
+                <button type="button" class="btn-transparent" style="text-align: left; padding: 5px 0; font-size:0.85rem;" onclick="getLocationGPS()">📍 Gunakan GPS Lokasi Saat Ini</button>
+                <span id="gps-status" style="font-size: 0.8rem; margin-left: 10px; color: var(--green);"></span>
+            </div>
+            <div class="form-group">
+                <label>Keterangan Detail</label>
+                <textarea id="lap-deskripsi" required placeholder="Sebutkan ciri-ciri khusus (jika hilang) atau kondisi barang (jika menemukan)..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Unggah Foto <span style="font-size: 0.8rem; font-weight: normal; color: #64748B;">(CNN Validated)</span></label>
+                <input type="file" id="lap-foto" accept="image/*" required>
+                <div class="ai-validation-box">
+                    <img id="previewFoto" style="max-width: 100%; max-height: 200px; display: none; margin: 10px auto; border-radius: 4px;">
+                    <p id="ai-status" class="text-gray">Silakan unggah foto. AI akan memverifikasi gambar.</p>
+                </div>
+            </div>
+            <button type="submit" id="btn-submit-laporan" class="btn-blue-full" disabled>Memuat AI...</button>
+            <button type="button" class="btn-transparent" onclick="navigate('dashboard')">Batal</button>
+        </form>
+    </div>
+
+    <div id="page-detail" class="page"></div>
+
+    <div id="page-notif" class="page">
+        <h2 class="section-title">🔔 Notifikasi Saya</h2>
+        <div id="notif-list"></div>
+    </div>
+
+    <div id="page-login" class="page auth-page">
         <div class="auth-box">
             <h2>Masuk</h2>
             <div class="form-group">
@@ -73,18 +165,18 @@
             </div>
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" id="login-pass" placeholder="******">
+                <input type="password" id="login-pass" placeholder="••••••">
             </div>
             <button class="btn-yellow-full" onclick="login()">Masuk Sekarang</button>
             <p class="auth-switch">Belum punya akun? <a href="#" onclick="navigate('register')">Daftar</a></p>
-            
             <div class="demo-box">
-                <p><strong>Akun Percobaan:</strong><br>fayza@student.ipb.ac.id / password123</p>
+                <p><strong>Akun Percobaan:</strong></p>
+                <p>fayza@student.ipb.ac.id / password123</p>
             </div>
         </div>
-    </main>
+    </div>
 
-    <main id="page-register" class="page auth-page">
+    <div id="page-register" class="page auth-page">
         <div class="auth-box">
             <h2>Daftar Akun</h2>
             <div class="form-group">
@@ -102,115 +194,12 @@
             <button class="btn-yellow-full" onclick="register()">Daftar Akun</button>
             <p class="auth-switch">Sudah punya akun? <a href="#" onclick="navigate('login')">Masuk</a></p>
         </div>
-    </main>
-
-    <main id="page-dashboard" class="page dashboard-page">
-        <div class="profile-card">
-            <div class="profile-info">
-                <h2 id="dash-nama">Siti Fayza Kamila</h2>
-                <p id="dash-email">fayza@student.ipb.ac.id</p>
-                <div class="poin-display">Poin Kejujuran: <strong class="text-orange" id="dash-poin">150</strong></div>
-            </div>
-            <button class="btn-yellow" onclick="navigate('lapor')">+ Buat Laporan</button>
-        </div>
-        
-        <h3 class="section-title">Riwayat Laporan Saya</h3>
-        <div id="my-reports" class="report-list"></div>
-    </main>
-
-    <main id="page-lapor" class="page form-page">
-        <div class="form-header">
-            <h2>Buat Laporan Baru</h2>
-            <p>Silakan lengkapi formulir di bawah ini untuk melaporkan barang.</p>
-        </div>
-        
-        <div class="alert-banner">
-            💡 <strong>Tips:</strong> Coba cari di <a href="#" onclick="navigate('explore')" style="color: var(--navy); text-decoration: underline;">Katalog Barang</a> dulu, siapa tahu barangmu sudah dilaporkan oleh orang lain!
-        </div>
-
-        <form class="report-form" onsubmit="submitLaporan(event)">
-            <div class="form-group">
-                <label>Jenis Kejadian:</label>
-                <div class="radio-group">
-                    <label><input type="radio" name="jenis" value="Hilang" checked> Saya Kehilangan Barang</label>
-                    <label><input type="radio" name="jenis" value="Temuan"> Saya Menemukan Barang</label>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Nama / Judul Barang</label>
-                <input type="text" id="lap-judul" required placeholder="Contoh: Dompet Cokelat Wanita">
-            </div>
-            <div class="form-row">
-                <div class="form-group half">
-                    <label>Kategori</label>
-                    <select id="lap-kategori" required>
-                        <option value="">-- Pilih --</option>
-                        <option value="Dompet">Dompet</option>
-                        <option value="Elektronik">Elektronik</option>
-                        <option value="Dokumen">Dokumen (KTM/KTP)</option>
-                        <option value="Lainnya">Lainnya</option>
-                    </select>
-                </div>
-                <div class="form-group half">
-                    <label>Tanggal Kejadian</label>
-                    <input type="date" id="lap-tanggal" required>
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Lokasi di Kampus</label>
-                <div style="display: flex; gap: 10px;">
-                    <input type="text" id="lap-lokasi" required placeholder="Contoh: Kantin Stekpi">
-                    <button type="button" class="btn-outline" onclick="getLocationGPS()" style="white-space: nowrap;">📍 Tag GPS</button>
-                </div>
-                <small id="gps-status" style="color: var(--blue); font-weight: bold;"></small>
-            </div>
-            <div class="form-group">
-                <label>Keterangan Detail (AI Moderated)</label>
-                <textarea id="lap-deskripsi" required placeholder="Sebutkan ciri-ciri khusus (jika hilang) atau kondisi barang (jika menemukan)..."></textarea>
-            </div>
-            <div class="form-group">
-                <label>Unggah Foto (CNN Validated)</label>
-                <input type="file" id="lap-foto" accept="image/png, image/jpeg" required>
-                <small>Hanya file gambar (JPG/PNG).</small>
-                
-                <div class="ai-validation-box" id="ai-box">
-                    <p id="ai-status" class="text-gray">🔄 Sistem AI sedang disiapkan...</p>
-                    <img id="previewFoto" src="" style="display:none; max-height:150px; margin-top:10px; border-radius:4px;">
-                </div>
-            </div>
-            <button type="submit" class="btn-blue-full" id="btn-submit-laporan" disabled>Memuat AI...</button>
-            <button type="button" class="btn-transparent" onclick="navigate('dashboard')">Batal</button>
-        </form>
-    </main>
-
-    <main id="page-explore" class="page list-page">
-        <h2>Daftar Laporan Kampus</h2>
-        <p>Cari barang yang hilang atau ditemukan di area Kampus.</p>
-        
-        <div class="filter-bar">
-            <input type="text" id="search-input" class="search-input" placeholder="Cari barang atau lokasi...">
-            <select id="filter-jenis" class="filter-select">
-                <option value="Semua">Semua Jenis</option>
-                <option value="Hilang">Hilang</option>
-                <option value="Temuan">Temuan</option>
-            </select>
-            <button class="btn-blue" onclick="renderExplore()">Cari</button>
-        </div>
-
-        <div id="explore-gallery" class="explore-grid"></div>
-    </main>
-
-    <main id="page-detail" class="page detail-page"></main>
-
-    <main id="page-notif" class="page notif-page">
-        <h2 style="display:flex; align-items:center; gap:10px;">🔔 Notifikasi Saya</h2>
-        <div id="notif-list" style="margin-top:20px;"></div>
-    </main>
+    </div>
 
     <footer class="footer">
-        <p>© 2026 KETEMU — Kelompok 5 · IPB University · MVP</p>
+        © 2026 KETEMU — Kelompok 5 — IPB University — MVP
     </footer>
 
-    <script src="app.js?v=999"></script>
+    <script src="app.js?v=888"></script>
 </body>
 </html>
