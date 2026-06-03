@@ -252,61 +252,82 @@ select:focus, textarea:focus {
 
 /* ==========================================
    CSS RESPONSIVE SUPER AMPUH (Layar < 768px)
+   Ganti seluruh blok @media yang lama dengan ini
    ========================================== */
 @media screen and (max-width: 768px) {
-    /* 1. Memaksa semua elemen tidak melebar ke luar layar */
-    * {
-        box-sizing: border-box !important;
-        max-width: 100% !important;
+    /* 1. Cegah elemen keluar layar */
+    * { box-sizing: border-box !important; max-width: 100% !important; }
+
+    /* 2. PERBAIKAN NAVBAR: Rapi seperti tombol aplikasi */
+    nav.navbar { 
+        flex-direction: column !important; 
+        padding: 15px !important; 
+        text-align: center !important; 
+    }
+    .nav-left, .nav-right { 
+        flex-direction: column !important; 
+        width: 100% !important; 
+        gap: 8px !important; 
+        margin-top: 10px !important; 
+    }
+    .nav-link { 
+        display: block !important; 
+        width: 100% !important; 
+        padding: 12px !important; 
+        background: #0F172A !important; 
+        border-radius: 6px !important; 
+        font-weight: 600 !important;
     }
 
-    /* 2. Merapikan Navigasi Atas */
-    nav {
-        flex-direction: column !important;
-        height: auto !important;
-        padding: 15px !important;
-        text-align: center !important;
+    /* 3. PERBAIKAN KOTAK PENCARIAN: Disusun memanjang ke bawah */
+    .filter-bar { 
+        flex-direction: column !important; 
+        gap: 10px !important; 
+    }
+    .search-input, .filter-select { 
+        width: 100% !important; 
     }
 
-    nav div {
-        flex-direction: column !important;
-        gap: 10px !important;
-        margin-top: 10px !important;
+    /* 4. PERBAIKAN KOTAK STATISTIK: Tidak gepeng, turun ke bawah */
+    .stats-container { 
+        grid-template-columns: 1fr !important; 
+        gap: 15px !important; 
     }
 
-    /* 3. Menyesuaikan Lebar Container Utama */
-    .container, .form-container, .page, .detail-header, .detail-box {
-        width: 95% !important;
-        margin: 10px auto !important;
-        padding: 15px !important;
+    /* 5. PERBAIKAN TOMBOL HERO DI BERANDA */
+    .hero-buttons { 
+        flex-direction: column !important; 
+        gap: 10px !important; 
     }
-
-    /* 4. Merombak Kartu Laporan Menjadi Vertikal */
-    .card {
-        flex-direction: column !important;
+    .hero-buttons button {
         width: 100% !important;
-        height: auto !important;
-        margin-bottom: 15px !important;
     }
 
-    /* 5. Menyesuaikan Gambar di dalam Kartu */
-    .card-img-placeholder, .card-img-placeholder img {
-        width: 100% !important;
-        height: 200px !important;
-        object-fit: cover !important;
-        border-radius: 8px 8px 0 0 !important;
+    /* 6. Layout Umum & Kartu (Tetap dipertahankan) */
+    .container, .form-container, .page, .detail-header, .detail-box { 
+        width: 95% !important; 
+        margin: 10px auto !important; 
+        padding: 15px !important; 
     }
-
-    /* 6. Memaksa Kotak Galeri Menjadi Satu Kolom ke Bawah */
-    #explore-gallery, #my-reports {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
+    .card { 
+        flex-direction: column !important; 
+        width: 100% !important; 
+        height: auto !important; 
+        margin-bottom: 15px !important; 
     }
-
-    /* 7. Melebarkan Tombol dan Input Form */
-    input, select, textarea, button, .btn-card, .btn-blue-full, .btn-green-full {
-        width: 100% !important;
-        margin-top: 10px !important;
+    .card-img-placeholder, .card-img-placeholder img { 
+        width: 100% !important; 
+        height: 220px !important; 
+        object-fit: cover !important; 
+        border-radius: 8px 8px 0 0 !important; 
+    }
+    #explore-gallery, #my-reports { 
+        display: flex !important; 
+        flex-direction: column !important; 
+        align-items: center !important; 
+    }
+    input, select, textarea, button, .btn-card, .btn-blue-full, .btn-green-full { 
+        width: 100% !important; 
+        margin-top: 10px !important; 
     }
 }
