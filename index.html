@@ -16,7 +16,10 @@
 
     <nav class="navbar">
         <div class="nav-left">
-            <div class="logo" onclick="navigate('home')">🔍 KETEMU <span style="font-size: 0.8rem; font-weight: normal; margin-left: 10px; color: #94A3B8;">Daftar Laporan</span></div>
+            <div class="logo" onclick="navigate('home')">🔍 KETEMU 
+                <span style="font-size: 0.8rem; font-weight: normal; margin-left: 10px; color: #94A3B8; cursor: pointer;" onclick="event.stopPropagation(); navigate('explore')">Daftar Laporan</span>
+    </div>
+
         </div>
         
         <div class="hamburger-menu" onclick="toggleMobileMenu()">☰</div>
