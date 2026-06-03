@@ -206,6 +206,9 @@ async function submitLaporan(e) {
     btn.innerText = "Kirim Laporan"; btn.disabled = false;
 }
 
+// ==========================================
+// RENDER DASHBOARD (PERBAIKAN LAYOUT & WARNA STATUS)
+// ==========================================
 async function renderDashboard() {
     if (!currentUser) return;
     const { data: userData } = await db.from('users').select('nama, email, poin').eq('id', currentUser.id).single();
@@ -218,19 +221,25 @@ async function renderDashboard() {
     container.innerHTML = (myReports && myReports.length) ? '' : '<p>Belum ada laporan.</p>';
     
     myReports.forEach(item => {
-        let badgeStatusClass = 'badge-aktif';
-        if(item.status === 'Selesai') badgeStatusClass = 'badge-selesai';
-        if(item.status === 'Menunggu Serah Terima') badgeStatusClass = 'badge-serah-terima';
+        // Logika Warna Status Dinamis
+        let badgeStatusClass = 'badge-aktif'; // Default: Kuning
+        if(item.status === 'Selesai') badgeStatusClass = 'badge-selesai'; // Hijau
+        if(item.status === 'Menunggu Serah Terima') badgeStatusClass = 'badge-serah-terima'; // Biru
         
         container.innerHTML += `
-            <div class="card" style="flex-direction:row; height:150px;">
-                <div class="card-img-placeholder" style="width:200px;"><img src="${item.foto}"></div>
-                <div class="card-body">
-                    <span class="badge ${item.jenis === 'Hilang' ? 'badge-hilang' : 'badge-temuan'}">${item.jenis.toUpperCase()}</span>
-                    <span class="badge ${badgeStatusClass}">${item.status.toUpperCase()}</span>
-                    <h3 class="card-title">${item.judul}</h3>
-                    <p class="card-meta">📍 ${item.lokasi}</p>
-                    <button class="btn-card" onclick="openDetail(${item.id})">Kelola Laporan</button>
+            <div class="card dash-card">
+                <div class="card-img-placeholder dash-card-img"><img src="${item.foto}"></div>
+                <div class="card-body" style="display:flex; flex-direction:column; justify-content:space-between; padding: 20px;">
+                    <div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <span class="badge ${item.jenis === 'Hilang' ? 'badge-hilang' : 'badge-temuan'}">${item.jenis.toUpperCase()}</span>
+                            <span class="badge ${badgeStatusClass}" style="font-size: 0.7rem;">STATUS: ${item.status.toUpperCase()}</span>
+                        </div>
+                        <h3 class="card-title" style="margin-bottom: 8px;">${item.judul}</h3>
+                        <p class="card-meta" style="color:#DC2626; font-weight:600; margin-bottom: 5px;">📍 ${item.lokasi}</p>
+                        <p style="font-size: 0.85rem; color:#64748B;">Kategori: ${item.kategori}</p>
+                    </div>
+                    <button class="btn-outline" style="margin-top:15px; width: 100%; color: var(--navy); border-color: var(--navy);" onclick="openDetail(${item.id})">Kelola Laporan</button>
                 </div>
             </div>`;
     });
