@@ -100,11 +100,10 @@ async function initAI() {
         status.className = "text-green"; 
         btn.innerText = "Kirim Laporan";
     } catch(e) { 
-        // JIKA AI GAGAL, UBAH JADI MODE MANUAL UNTUK PRESENTASI
         status.innerHTML = "⚠️ Jaringan Lemah: Beralih ke Mode Manual (AI Bypass)"; 
         status.className = "text-orange"; 
         btn.innerText = "Kirim Laporan (Manual)";
-        btn.disabled = false; // PASTIKAN TOMBOL TERBUKA
+        btn.disabled = false; 
     }
 }
 
@@ -117,10 +116,9 @@ document.getElementById('lap-foto').addEventListener('change', function(e) {
     const reader = new FileReader();
     reader.onload = function(event) {
         preview.src = event.target.result; preview.style.display = 'block';
-        base64Foto = event.target.result; // Langsung simpan fotonya
+        base64Foto = event.target.result; 
         
         preview.onload = async function() {
-            // BYPASS: Jika AI belum dimuat, langsung loloskan saja untuk demo!
             if (!aiModel || !nsfwModel) {
                 status.innerHTML = "✅ Foto diterima (Mode Manual Aktif)";
                 status.className = "text-green";
@@ -165,11 +163,37 @@ document.getElementById('lap-foto').addEventListener('change', function(e) {
     reader.readAsDataURL(file);
 });
 
-function validateTextNLP(text) {
-    const badWords = ['bodoh', 'kasar', 'jancok'];
-    let isValid = true;
-    badWords.forEach(word => { if(text.toLowerCase().includes(word)) isValid = false; });
-    return isValid;
+// ==========================================
+// RULE-BASED AI (NLP) CONTENT FILTERING (BARU)
+// ==========================================
+function validateTextNLP(judul, lokasi, deskripsi) {
+    const badWords = [
+        'bodoh', 'tolol', 'goblok', 'anjing', 'babi', 
+        'bangsat', 'jancok', 'ngewe', 'kontol', 'memek',
+        'maling', 'bajingan', 'kampret', 'sialan', 'kasar'
+    ];
+    
+    // Gabungkan input, ubah ke huruf kecil
+    const fullText = `${judul} ${lokasi} ${deskripsi}`.toLowerCase();
+    
+    let isClean = true;
+    let detectedWord = "";
+
+    for (let word of badWords) {
+        // Regex memastikan kata berdiri sendiri, bukan bagian dari kata lain
+        const regex = new RegExp(`\\b${word}\\b`, 'i');
+        if (regex.test(fullText)) {
+            isClean = false;
+            detectedWord = word;
+            break; 
+        }
+    }
+    
+    if (!isClean) {
+        alert(`⚠️ SISTEM AI NLP MENOLAK LAPORAN:\nTerdeteksi penggunaan kata tidak pantas ("${detectedWord}").\nHarap gunakan bahasa yang sopan.`);
+    }
+    
+    return isClean;
 }
 
 async function renderStats() {
@@ -181,10 +205,18 @@ async function renderStats() {
     document.getElementById('stat-user').innerText = users || 0;
 }
 
+// ==========================================
+// SUBMIT LAPORAN (UPDATE: MELEMPARKAN JUDUL, LOKASI, & DESKRIPSI KE NLP)
+// ==========================================
 async function submitLaporan(e) {
     e.preventDefault();
+    
+    const judul = document.getElementById('lap-judul').value;
+    const lokasi = document.getElementById('lap-lokasi').value;
     const deskripsi = document.getElementById('lap-deskripsi').value;
-    if (!validateTextNLP(deskripsi)) return alert("Sistem NLP menolak laporan: Mengandung kata kasar!");
+    
+    // Validasi AI NLP berjalan di sini
+    if (!validateTextNLP(judul, lokasi, deskripsi)) return;
     
     const btn = document.getElementById('btn-submit-laporan');
     btn.innerText = "Mengunggah ke Database..."; btn.disabled = true;
@@ -192,8 +224,8 @@ async function submitLaporan(e) {
     const { error } = await db.from('laporan').insert([{
         user_id: currentUser.id, pelapor: currentUser.nama,
         jenis: document.querySelector('input[name="jenis"]:checked').value,
-        judul: document.getElementById('lap-judul').value, kategori: document.getElementById('lap-kategori').value,
-        tanggal: document.getElementById('lap-tanggal').value, lokasi: document.getElementById('lap-lokasi').value,
+        judul: judul, kategori: document.getElementById('lap-kategori').value,
+        tanggal: document.getElementById('lap-tanggal').value, lokasi: lokasi,
         gps: gpsLocation, deskripsi: deskripsi, foto: base64Foto, status: 'Aktif'
     }]);
 
@@ -207,7 +239,7 @@ async function submitLaporan(e) {
 }
 
 // ==========================================
-// RENDER DASHBOARD (PERBAIKAN LAYOUT & WARNA STATUS)
+// RENDER DASHBOARD
 // ==========================================
 async function renderDashboard() {
     if (!currentUser) return;
@@ -221,10 +253,9 @@ async function renderDashboard() {
     container.innerHTML = (myReports && myReports.length) ? '' : '<p>Belum ada laporan.</p>';
     
     myReports.forEach(item => {
-        // Logika Warna Status Dinamis
-        let badgeStatusClass = 'badge-aktif'; // Default: Kuning
-        if(item.status === 'Selesai') badgeStatusClass = 'badge-selesai'; // Hijau
-        if(item.status === 'Menunggu Serah Terima') badgeStatusClass = 'badge-serah-terima'; // Biru
+        let badgeStatusClass = 'badge-aktif'; 
+        if(item.status === 'Selesai') badgeStatusClass = 'badge-selesai'; 
+        if(item.status === 'Menunggu Serah Terima') badgeStatusClass = 'badge-serah-terima'; 
         
         container.innerHTML += `
             <div class="card dash-card">
@@ -246,7 +277,7 @@ async function renderDashboard() {
 }
 
 // ==========================================
-// LOGIKA FILTER PENCARIAN (FOTO 1 & 2)
+// LOGIKA FILTER PENCARIAN
 // ==========================================
 async function renderExplore() { filterLaporan(); }
 
@@ -258,17 +289,14 @@ async function filterLaporan() {
     
     container.innerHTML = '<p style="text-align:center; width:100%; color:#64748B;">Mencari data database...</p>';
 
-    // Buat query dasar
     let query = db.from('laporan').select('*').eq('status', 'Aktif').order('id', { ascending: false });
     
-    // Tambahkan filter jika tidak pilih "Semua"
     if (jenisVal !== 'Semua') query = query.eq('jenis', jenisVal);
     if (kategoriVal !== 'Semua') query = query.eq('kategori', kategoriVal);
 
     const { data: results } = await query;
     if(!results || results.length === 0){ container.innerHTML = '<p style="text-align:center; width:100%; color:#64748B;">Tidak ada barang yang sesuai filter.</p>'; return; }
 
-    // Filter teks pencarian (Judul / Lokasi)
     let finalResults = results;
     if (searchVal) {
         finalResults = results.filter(item => item.judul.toLowerCase().includes(searchVal) || item.lokasi.toLowerCase().includes(searchVal));
@@ -295,7 +323,7 @@ async function filterLaporan() {
 }
 
 // ==========================================
-// LOGIKA DETAIL BARANG & KLAIM (FOTO 3 & 4)
+// LOGIKA DETAIL BARANG & KLAIM
 // ==========================================
 async function openDetail(id) {
     const container = document.getElementById('page-detail');
@@ -311,7 +339,6 @@ async function openDetail(id) {
 
         if (item.status === 'Aktif') {
             if (isPembuatPos) {
-                // FOTO 4: Pembuat pos melihat siapa saja yang mencoba klaim
                 let listHTML = '';
                 klaimList.filter(k => k.status === 'PENDING').forEach(k => {
                     listHTML += `
@@ -333,8 +360,6 @@ async function openDetail(id) {
                     ${listHTML ? listHTML : '<p style="color:#64748B;">Belum ada tanggapan masuk untuk barang ini.</p>'}
                 </div>`;
             } else {
-                // FOTO 3: Orang lain mengajukan klaim
-                // Logika Advance: Kalimat berubah tergantung ini laporan kehilangan atau penemuan
                 const infoText = item.jenis === 'Hilang' ? 
                     "Menemukan barang ini? Bagi yang menemukan, silakan ajukan klaim dan sebutkan lokasi detail atau bukti penemuan." : 
                     "Merasa kehilangan? Silakan ajukan klaim dan sebutkan isi atau ciri khusus di dalam barang ini sebagai bukti.";
@@ -361,7 +386,6 @@ async function openDetail(id) {
         }
     } else { actionBox = `<div class="detail-box"><p><a href="#" onclick="navigate('login')">Masuk</a> untuk mengajukan klaim.</p></div>`; }
 
-    // FOTO 3 & 4: Header Detail Barang dengan Kotak Kategori/Tanggal sejajar
     container.innerHTML = `
         <div class="detail-header">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
@@ -391,12 +415,10 @@ async function openDetail(id) {
     `;
 }
 
-// Tambahkan Fungsi Menolak Klaim
 async function tolakKlaim(klaimId) {
     if(!confirm("Yakin ingin menolak bukti klaim ini?")) return;
     await db.from('klaim').update({ status: 'DITOLAK' }).eq('id', klaimId);
     alert("Klaim berhasil ditolak.");
-    // Refresh otomatis halaman detailnya
     const { data: k } = await db.from('klaim').select('laporan_id').eq('id', klaimId).single();
     openDetail(k.laporan_id);
 }
@@ -451,6 +473,7 @@ async function renderNotif() {
     await db.from('notifikasi').update({ dibaca: true }).eq('user_id', currentUser.id);
     updateNotifBadge();
 }
+
 // ==========================================
 // FUNGSI TOGGLE HAMBURGER MENU MOBILE
 // ==========================================
@@ -459,11 +482,9 @@ function toggleMobileMenu() {
     menu.classList.toggle('show');
 }
 
-// Modifikasi fungsi navigate bawaanmu agar otomatis menutup menu setelah diklik
 const originalNavigate = navigate;
 navigate = function(pageId) {
     originalNavigate(pageId);
-    // Otomatis tutup kembali menu hamburger setelah link diklik
     const menu = document.getElementById('nav-menu-container');
     if (menu) menu.classList.remove('show');
 }
