@@ -21,23 +21,28 @@
     <div id="toast" class="toast" style="display: none;"></div>
 
     <nav class="navbar">
-        <div class="nav-left">
-            <div class="logo" onclick="navigate('home')">🔍 KETEMU</div>
-            <a href="#" class="nav-link" onclick="navigate('explore')">Daftar Laporan</a>
-            <a href="#" class="nav-link auth-only" onclick="navigate('dashboard')" style="display: none;">Dashboard</a>
-        </div>
-        <div class="nav-right" id="nav-guest">
-            <a href="#" class="nav-link" onclick="navigate('login')">Masuk</a>
+    <div class="nav-left">
+        <div class="logo" onclick="navigate('home')">🔍 KETEMU</div>
+    </div>
+    
+    <div class="hamburger-menu" onclick="toggleMobileMenu()">☰</div>
+    
+    <div class="nav-right" id="nav-menu-container">
+        <div id="nav-guest" style="display: flex; gap: 15px; align-items: center;">
+            <span class="nav-link" onclick="navigate('explore')">Daftar Laporan</span>
+            <button class="btn-outline-sm" onclick="navigate('login')">Masuk</button>
             <button class="btn-yellow-sm" onclick="navigate('register')">Daftar</button>
         </div>
-        <div class="nav-right" id="nav-auth" style="display: none;">
-            <a href="#" class="nav-link" onclick="navigate('notif')">🔔 <span id="notif-badge" class="badge-dot"></span></a>
-            <div class="poin-badge" id="nav-poin">150 Poin</div>
-            <a href="#" class="nav-link" id="nav-username" onclick="navigate('dashboard')">Siti Fayza Kamila</a>
-            <button class="btn-yellow-sm" onclick="navigate('lapor')">Lapor</button>
-            <button class="btn-outline-sm" onclick="logout()">Keluar</button>
+        
+        <div id="nav-auth" style="display: none; gap: 15px; align-items: center;">
+            <span class="nav-link" onclick="navigate('explore')">Daftar Laporan</span>
+            <span class="nav-link" onclick="navigate('dashboard')">Dashboard</span>
+            <span id="nav-poin" class="poin-badge">0 Poin</span>
+            <span id="nav-username" style="font-weight: 600; color: white;">User</span>
+            <button class="btn-yellow-sm" onclick="logout()">Keluar</button>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <main id="page-home" class="page active">
         <div class="hero-section">
