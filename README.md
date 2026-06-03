@@ -43,13 +43,12 @@
 
 ## 🚀 Cara Menjalankan Proyek Secara Lokal
 
-Karena proyek ini dibangun menggunakan Vanilla JS (Client-Side) dan Supabase (BaaS), proyek dapat dijalankan dengan sangat mudah tanpa perlu instalasi *node modules* atau *server* lokal yang rumit.
-
-1. **Clone repository ini:**
+1. Clone repository ini:
 ```bash
    git clone [https://github.com/sitifayzakamila-ai/ketemu]
 
-2. **Buka folder proyek di Text Editor (contoh: VS Code)**
-3. **Jalankan menggunakan ekstensi Live Server di VS Code, atau buka langsung file index.html di browsermu**
+2. Buka folder proyek di Text Editor (contoh: VS Code)
+
+3. Jalankan menggunakan ekstensi Live Server di VS Code, atau buka langsung file index.html di browsermu
 
 (Catatan): Pastikan perangkat terhubung ke internet agar script TensorFlow, NSFWjs, dan Supabase client dapat dimuat dari CDN dengan baik.
